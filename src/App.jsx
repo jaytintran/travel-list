@@ -16,23 +16,46 @@ function Logo() {
 
 function Form({ handleAddItem }) {
   const [inputValue, setInputValue] = useState("");
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [isCustomQuantity, setIsCustomQuantity] = useState(false); // To track custom input
+  const [customQuantity, setCustomQuantity] = useState(""); // For custom quantity input
 
   const handleInputChange = (e) => {
+    console.log(e.target);
     setInputValue(e.target.value);
   };
 
+  const handleQuantityChange = (e) => {
+    const value = e.target.value;
+    if (value === "custom") {
+      setIsCustomQuantity(true);
+      setSelectedValue(customQuantity);
+    } else {
+      setIsCustomQuantity(false);
+      setSelectedQuantity(Number(value));
+    }
+  };
+
+  const handCustomQuantityChange = (e) => {
+    setCustomQuantity(e.target.value);
+  };
+
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the page from reloading
+    // Prevent the page from reloading
+    e.preventDefault();
+
     if (inputValue !== "") {
       const newItem = {
         id: Date.now(),
         description: inputValue,
-        quantity: 1,
+        quantity: isCustomQuantity ? customQuantity : selectedQuantity,
         packed: false,
       };
 
       handleAddItem(newItem);
       setInputValue("");
+      setCustomQuantity("");
+      setSelectedQuantity(1 /* reset to default */);
     }
   };
 
@@ -44,9 +67,30 @@ function Form({ handleAddItem }) {
         type="text"
         placeholder="Enter your thing..."
         onChange={handleInputChange}
+        value={inputValue}
       />
+      <select
+        value={isCustomQuantity ? "custom" : selectedQuantity}
+        onChange={handleQuantityChange}
+      >
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((i) => (
+          <option key={i} value={i}>
+            {i}
+          </option>
+        ))}
+        <option value="custom">Custom</option>
+      </select>
+      {isCustomQuantity && (
+        <input
+          className="input-custom"
+          type="number"
+          placeholder="How many?"
+          value={customQuantity}
+          onChange={handCustomQuantityChange}
+        />
+      )}
       <button className="button" type="submit">
-        Submit
+        Add
       </button>
     </form>
   );
@@ -69,12 +113,17 @@ function PackingList({ items }) {
 }
 
 function Item({ item }) {
+  const [isPacked, setIsPacked] = useState(item.packed);
+  const handleDelete = () => {
+    setIsPacked((prevState) => !prevState);
+  };
+
   return (
     <li>
-      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
+      <span style={isPacked ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
-      <button>✖️</button>
+      <button onClick={handleDelete}>✖️</button>
     </li>
   );
 }
@@ -99,6 +148,7 @@ function Stats({ items }) {
 
 function App() {
   const [items, setItems] = useState(initialItems);
+
   function handleAddItem(newItem) {
     setItems([...items, newItem]);
   }
