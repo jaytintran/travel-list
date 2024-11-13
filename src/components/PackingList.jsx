@@ -5,7 +5,12 @@ import "../index.css";
 import { useState } from "react";
 import Clear from "./Clear";
 
-function PackingList({ items, handleDeleteItem, toggleItem, clearList }) {
+export default function PackingList({
+  items,
+  handleDeleteItem,
+  toggleItem,
+  clearList,
+}) {
   const [sortBy, setSortBy] = useState("packed");
 
   let sortedItems;
@@ -48,5 +53,3 @@ function PackingList({ items, handleDeleteItem, toggleItem, clearList }) {
     </>
   );
 }
-
-export default PackingList;

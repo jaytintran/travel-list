@@ -1,7 +1,7 @@
 import React from "react";
 import "../index.css";
 
-function Item({ item, handleDeleteItem, toggleItem }) {
+export default function Item({ item, handleDeleteItem, toggleItem }) {
   return (
     <li>
       <input
@@ -28,5 +28,3 @@ function Item({ item, handleDeleteItem, toggleItem }) {
     </li>
   );
 }
-
-export default Item;
